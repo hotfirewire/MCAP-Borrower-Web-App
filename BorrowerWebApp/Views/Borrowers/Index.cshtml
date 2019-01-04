@@ -1,0 +1,225 @@
+﻿@model PaginatedList<BorrowerWebApp.Models.Borrower>
+
+@{
+    ViewData["Title"] = "Borrowers";
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+         $(function () {
+            $('#btnRegister').on('click', function (e) {
+                e.preventDefault();
+                   $('#modelHeader').text('Register');
+                        $('#btnModelRegister').removeClass('invisible').addClass('visible');
+                        $('#btnModelEdit').removeClass('visible').addClass('invisible');
+                        $('#modelContent').load('@Url.Action("CreatePartial", "Borrowers")', function () {
+                            $('form#frmCreate').removeData("validator");
+                            $('form#frmCreate').removeData("unobtrusiveValidation");
+                            $.validator.unobtrusive.parse($('form#frmCreate'));
+                            $('#actionModel').modal('show');
+                });
+            });
+
+            $('.btnEdit').on('click', function (e) {
+                e.preventDefault();
+                $btn = $(this);
+                $('#modelHeader').text('Edit');
+                $('#btnModelEdit').removeClass('invisible').addClass('visible');
+                $('#btnModelRegister').removeClass('visible').addClass('invisible');
+                $('#modelContent').load('/Borrowers/EditPartial/' + $btn.data('id'), function () {
+                    $('form#frmEdit').removeData("validator");
+                    $('form#frmEdit').removeData("unobtrusiveValidation");
+                    $.validator.unobtrusive.parse($('form#frmEdit'));
+                    $('#actionModel').modal('show');
+                });
+
+                //$('#actionModel').modal('show');
+                //$.ajax({
+                //    url: '/Home/Students',
+                //    type: 'POST',
+                //    cache: false,
+                //    async: true,
+                //    dataType: "html",
+                //    data: filters
+                //})
+                //    .done(function (result) {
+                //        $('#students').html(result);
+                //    }).fail(function (xhr) {
+                //        console.log('error : ' + xhr.status + ' - ' + xhr.statusText + ' - ' + xhr.responseText);
+                //    });
+            });
+             $('.btnDelete').on('click', function (e) {
+                 e.preventDefault();
+                 $btn = $(this);
+                 $('#modelContentDelete').text('Delete ' + $btn.data('name') + '?');
+                 $('#actionModelDelete').modal('show');
+                 $('#btnModelDelete').data('id', $btn.data('id'));
+
+             });
+             $('#btnModelDelete').on('click', function (e) {
+                 e.preventDefault();
+                 $btn = $(this);
+                 $.post('/Borrowers/Delete', { id: $btn.data('id') })
+                     .done(function (data) {
+                         window.location.replace("/borrowers");
+                     });
+             });
+
+             $('#btnModelRegister').on('click', function (e) {
+                $('form#frmCreate').submit();
+
+             });
+             $('#btnModelEdit').on('click', function (e) {
+                 $('form#frmEdit').submit();
+
+             });
+             $('form#frmCreate').on('submit', function (e) {
+                 e.preventDefault();
+                 alert('testssss');
+                    //
+                    //$.validator.unobtrusive.parse($form);
+                    //$.post($form.attr("action"), $form.serialize()).done(function (res) {
+                    //    $mymodal = $("#actionModel");
+                    //    //update the modal's body with the response received
+                    //    $mymodal.find("div.modelContent").html(res);
+                    //    // Show the modal
+                    //    $mymodal.modal("show");
+                    //});
+             });
+            //$('#btnModelEdit').on('click', function (e) {
+            //    e.preventDefault();
+            //    alert('test2');
+            //});
+            //$('#btnModelDelete').on('click', function (e) {
+            //    e.preventDefault();
+            //    alert('test3');
+            //});
+
+
+    });
+</script>
+
+}
+<h1>Borrowers</h1>
+<p>
+    <button type="button" class="btn btn-primary" id="btnRegister">
+        Register
+    </button>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["FirstNameSortParm"]">First Name</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["LastNameSortParm"]">Last Name</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GenderSortParm"]">Gender</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">Registration Date</a>
+            </th>
+            <th>
+                Login
+            </th>
+            <th>
+                Password
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.BorrowerId)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegistrationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Login)
+                </td>
+                <td>
+                    ****
+                </td>
+                <td>
+                    @*<a data-id="@item.BorrowerId">Edit</a> |
+                        <a data-id="@item.BorrowerId">Delete</a>*@
+                    <a class="btnEdit" asp-action="Edit" asp-route-id="@item.BorrowerId" data-id="@item.BorrowerId" data-name="@item.FullName">Edit</a> |
+                    <a class="btnDelete" asp-action="Delete" asp-route-id="@item.BorrowerId" data-id="@item.BorrowerId" data-name="@item.FullName">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+<!-- Modal -->
+<div class="modal fade" id="actionModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modelHeader"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelContent">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary invisible" id="btnModelRegister">Register</button>
+                <button type="button" class="btn btn-primary invisible" id="btnModelEdit">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="actionModelDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modelHeader">Delete Borrower</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelContentDelete">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnModelDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
