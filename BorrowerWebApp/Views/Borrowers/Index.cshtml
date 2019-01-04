@@ -33,20 +33,6 @@
                     $('#actionModel').modal('show');
                 });
 
-                //$('#actionModel').modal('show');
-                //$.ajax({
-                //    url: '/Home/Students',
-                //    type: 'POST',
-                //    cache: false,
-                //    async: true,
-                //    dataType: "html",
-                //    data: filters
-                //})
-                //    .done(function (result) {
-                //        $('#students').html(result);
-                //    }).fail(function (xhr) {
-                //        console.log('error : ' + xhr.status + ' - ' + xhr.statusText + ' - ' + xhr.responseText);
-                //    });
             });
              $('.btnDelete').on('click', function (e) {
                  e.preventDefault();
@@ -76,25 +62,8 @@
              $('form#frmCreate').on('submit', function (e) {
                  e.preventDefault();
                  alert('testssss');
-                    //
-                    //$.validator.unobtrusive.parse($form);
-                    //$.post($form.attr("action"), $form.serialize()).done(function (res) {
-                    //    $mymodal = $("#actionModel");
-                    //    //update the modal's body with the response received
-                    //    $mymodal.find("div.modelContent").html(res);
-                    //    // Show the modal
-                    //    $mymodal.modal("show");
-                    //});
+  
              });
-            //$('#btnModelEdit').on('click', function (e) {
-            //    e.preventDefault();
-            //    alert('test2');
-            //});
-            //$('#btnModelDelete').on('click', function (e) {
-            //    e.preventDefault();
-            //    alert('test3');
-            //});
-
 
     });
 </script>
